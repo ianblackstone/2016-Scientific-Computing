@@ -17,12 +17,13 @@ trend = np.copy(data[:,5])
 # Generate a plot of the first 60 data points and save the plot as a jpg file.
 plt.plot(date[:60],average[:60])
 plt.ylim((300,330))
-plt.savefig(fname='plot_1.jpg')
+plt.savefig(filename='plot_1.jpg')
 plt.show()
 
 # Calculate the difference between the interpolated and trend values and plot those differences over time.
 differences = np.subtract(interp,trend)
 plt.plot(date,differences)
+plt.savefig(filename='plot_2.jpg')
 plt.show()
 
 # Save the date and trend data in a text file

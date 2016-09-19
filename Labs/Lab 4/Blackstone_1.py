@@ -2,8 +2,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-# define half life and step size in years
-tau = 75
+# define mean lifetime (half life/ln(2)) and step size in years
+tau = 75*1.44
 h = 1
 
 # Create a list with the initial value in the first cell

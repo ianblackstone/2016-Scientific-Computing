@@ -2,8 +2,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-# define half life and step size in years
-tau = 3.82
+# define mean lifetime (half life * ln(2)) and step size in days
+tau = 3.82*1.44
 h = 0.0001
 flag = 0
 

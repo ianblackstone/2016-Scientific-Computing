@@ -1,3 +1,6 @@
+# This code adds in a drag force, necessitating acceleration in the x direction to be tracked.  This code comes very close to overflow errors which means the value of B/m and b
+# cannot increase much without the code running the risk of being innaccurate or unable to run on some machines
+
 # Imports
 import numpy as np
 import matplotlib.pyplot as plt
@@ -27,8 +30,8 @@ def f(r,t):
 
 # Set range and interval size
 a = 0.0
-b = 43.0
-N = 10000
+b = 45.0
+N = 1000
 h = (b-a)/N
 
 # Create an array of time points and declare two empty lists.

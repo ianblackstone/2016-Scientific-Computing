@@ -1,3 +1,5 @@
+# Between the first code and this one I have changed to iterate over a list of angle values rather than a single angle value.
+
 # Imports
 import numpy as np
 import matplotlib.pyplot as plt

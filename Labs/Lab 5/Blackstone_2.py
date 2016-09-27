@@ -2,6 +2,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+# Define a function of r that returns the values of y and dy
+def f(r,t):
+	x = r[0]
+	y = r[1]
+	dx = r[2]
+	dy = r[3]
+	d2x = 0
+	d2y = g
+	return np.array([dx,dy,d2x,d2y],float)
+
 # Declare constants
 g = -9.8
 V = 100
@@ -27,16 +37,6 @@ for num in range(0,len(theta)):
 
 	# Set initial values for x and y
 	r = np.array([xi,yi,Vxi,Vyi],float)
-
-	# Define a function of r that returns the values of y and dy
-	def f(r,t):
-		x = r[0]
-		y = r[1]
-		dx = r[2]
-		dy = r[3]
-		d2x = 0
-		d2y = g
-		return np.array([dx,dy,d2x,d2y],float)
 
 	# For each time point track the values of x and y, then evaluate the function at the next points
 	# and set out current value of y and x equal to the output of our function at the midpoint of each bin

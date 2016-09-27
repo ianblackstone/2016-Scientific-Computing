@@ -4,7 +4,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-<<<<<<< HEAD
 # Define a function of r that returns the values of y and dy
 def f(r,t):
 	x = r[0]
@@ -15,10 +14,7 @@ def f(r,t):
 	d2y = g
 	return np.array([dx,dy,d2x,d2y],float)
 
-# Declare constants
-=======
 # Declare constants, initial values, theta values (in degrees) to be iterated over, and a list of colors for lines
->>>>>>> origin/master
 g = -9.8
 V = 100
 theta = [15,30,45,60]
@@ -46,19 +42,7 @@ for num in range(0,len(theta)):
 	# Set initial values for x and y
 	r = np.array([xi,yi,Vxi,Vyi],float)
 
-<<<<<<< HEAD
-=======
-	# Define a function of r that returns the values of dx, dy, d2x, and d2y
-	def f(r,t):
-		x = r[0]
-		y = r[1]
-		dx = r[2]
-		dy = r[3]
-		d2x = 0
-		d2y = g
-		return np.array([dx,dy,d2x,d2y],float)
 
->>>>>>> origin/master
 	# For each time point track the values of x and y, then evaluate the function at the next points
 	# and set out current value of y and x equal to the weighted average of our four calculated points in each bin
 	for t in tpoints:

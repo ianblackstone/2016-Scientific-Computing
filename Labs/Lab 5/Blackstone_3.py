@@ -30,7 +30,7 @@ def f(r,t):
 
 # Set range and interval size
 a = 0.0
-b = 45.0
+b = 43.0
 N = 1000
 h = (b-a)/N
 

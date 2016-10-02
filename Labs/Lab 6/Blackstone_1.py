@@ -10,20 +10,6 @@ yi = 0
 Vxi = V*yi/(xi**2 + yi**2)**(1/2)
 Vyi = V*xi/(xi**2 + yi**2)**(1/2)
 
-
-# Set initial values for x, y, vx, and vy in an array
-r = np.array([xi,yi,Vxi,Vyi],float)
-
-# Define a function of r that returns the values of dx, dy, d2x, and d2y
-def f(r,t):
-	x = r[0]
-	y = r[1]
-	dx = r[2]
-	dy = r[3]
-	d2x = g*x/(x**2 + y**2)**(1/2)
-	d2y = g*y/(x**2 + y**2)**(1/2)
-	return np.array([dx,dy,d2x,d2y],float)
-
 # Set range and interval size
 a = 0.0
 b = 10.0
@@ -33,6 +19,19 @@ h = 0.01
 tpoints = np.arange(a,b,h)
 ypts = []
 xpts = []
+
+# Set initial values for x, y, vx, and vy in an array
+r = np.array([xi,yi,Vxi,Vyi],float)
+
+# Define a function of r that returns the next values of dx, dy, d2x, and d2y
+def f(r,t):
+	x = r[0]
+	y = r[1]
+	dx = r[2]
+	dy = r[3]
+	d2x = g*x/(x**2 + y**2)**(1/2)
+	d2y = g*y/(x**2 + y**2)**(1/2)
+	return np.array([dx,dy,d2x,d2y],float)
 
 # For each time point track the values of x and y, then evaluate the function at the next points
 # and set out current value of y and x equal to the weighted average of our four calculated points in each bin
@@ -49,8 +48,8 @@ for t in tpoints:
 plt.plot(ypts,xpts)
 plt.xlabel("x")
 plt.ylabel('y')
-plt.title('Trajectory')
-plt.ylim(ymin=-2,ymax=2)
-plt.xlim(xmin=-2,xmax=2)
+plt.title('Earth\'s Orbit')
+plt.ylim(ymin=-1.5,ymax=1.5)
+plt.xlim(xmin=-1.5,xmax=1.5)
 plt.savefig(filename='plot1.png')
 plt.show()

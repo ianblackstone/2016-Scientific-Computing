@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Declare constants and initial conditions
+# Declare constants and initial conditions.  Units are in AU and years, so initial velocity is 2pi AU per year (or one orbit per year).
 g = -4*np.pi**2
 V = 2*np.pi
 xi = 1

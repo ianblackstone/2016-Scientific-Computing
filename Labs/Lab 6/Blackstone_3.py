@@ -1,3 +1,5 @@
+# This code uses the RK2 method, and since this method of approximation is less accurater than the RK4 method we see a noticable change in the energy of the system over just 100 years.
+
 # Imports
 import numpy as np
 import matplotlib.pyplot as plt

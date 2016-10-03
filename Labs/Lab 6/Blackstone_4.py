@@ -1,3 +1,6 @@
+# This code uses the Euler approximation method.  It is incredibly inaccurate over even a single year, but this can be mitigated by taking more data points.
+# Over 100 years to be close to as accurate as the RK2 method we need to take 10 million data points.
+
 # Imports
 import numpy as np
 import matplotlib.pyplot as plt

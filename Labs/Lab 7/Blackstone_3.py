@@ -3,7 +3,7 @@ import scipy.integrate as inter
 import matplotlib.pyplot as plt
 
 GMs = -4*np.pi**2
-Gmj = -4*np.pi**2 * 9.5*10**(-4)
+Gmj = -4*np.pi**2 * 9.5*10**(-1)
 Gme = -4*np.pi**2 * 3*10**(-6)
 Pjx0 = 5.455
 Pjy0 = 0

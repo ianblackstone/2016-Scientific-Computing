@@ -6,7 +6,7 @@ import numpy as np
 # Constants
 M = 100
 V = 10
-target = 1e-6
+target = 1e-4
 
 # Create arrays to hold potential values
 phi = np.zeros([M+1,M+1],float)
@@ -38,5 +38,5 @@ cont = plt.contour( phi , 15 , colors='black')
 plt.title('Equipotential contours using Laplace\'s method')
 plt.gca().invert_yaxis()
 plt.clabel(cont, inline=True, fontsize=10)
-plt.show()
 plt.savefig(filename='plot1.png')
+plt.show()

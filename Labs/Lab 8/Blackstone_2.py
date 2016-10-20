@@ -7,9 +7,9 @@ import numpy as np
 # Constants
 M = 100
 V = 10
-target = 1e-6
+target = 1e-4
 
-# Create arrays to hold potential values
+# Create arrays to hold potential values.
 phi = np.zeros([M+1,M+1],float)
 phi[-1,:] = V
 phi[:,-1] = V
@@ -22,7 +22,7 @@ ncount = 0
 while delta>target:
 	phiold=np.copy(phi)
 
-	# Calculate new values of the potential
+	# Calculate new values of the potential.
 	for i in range(M+1):
 		for j in range(M+1):
 			if i == 0 or i == M or j == 0 or j == M:
@@ -45,5 +45,5 @@ plt.plot(Xnew,Yinterp(Xnew))
 plt.title('Potential at X = 0.5 as a function of Y')
 plt.ylabel('potential')
 plt.xlabel('Y')
-plt.show()
 plt.savefig(filename='plot2.png')
+plt.show()

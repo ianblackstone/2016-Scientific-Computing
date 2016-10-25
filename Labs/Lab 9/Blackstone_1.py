@@ -25,7 +25,9 @@ for k in x:
 	npr.append(sum(ni)/m)
 
 plt.plot(x,nav,'b-',x,tar,'ro')
+plt.savefig('plot1.png')
 plt.show()
 
 plt.plot(x,npr,'b-')
+plt.savefig('plot2.png')
 plt.show()

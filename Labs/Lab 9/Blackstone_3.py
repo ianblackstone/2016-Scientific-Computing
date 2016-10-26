@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 nwalk = 100
 nsteps = 100
 
-# generate random directions for each step and generate a list of zeros for the x and y positions
+# generate random directions and step sizes for each step and generate a list of zeros for the x and y positions
 steps = 2*np.pi*np.random.rand(nwalk,nsteps,2)
 augstep = np.random.normal(1,0.2,[nwalk,nsteps])
 xsteps = np.zeros((nwalk,nsteps))

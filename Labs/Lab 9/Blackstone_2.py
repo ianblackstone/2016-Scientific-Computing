@@ -22,6 +22,6 @@ plt.savefig('plot3.png')
 plt.show()
 
 dist = np.sqrt(np.square(xsteps[:,-1]) + np.square(ysteps[:,-1]))
-a = np.histogram(dist)
-plt.hist(a)
+
+plt.hist(dist)
 plt.show()

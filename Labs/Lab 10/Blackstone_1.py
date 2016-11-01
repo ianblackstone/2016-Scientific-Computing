@@ -13,7 +13,17 @@ nsteps = 10
 
 # xy[walker,step,x or y]
 xy = np.zeros((nwalk,nsteps,2))
-steps = [(1,0),(-1,0),(0,1),(0,-1)]
+
+
+for i in range(nwalk):
+	for j in range(nsteps):
+		steps = []
+		# step = steps[np.random.randint(4)]
+		if [xy[i,j-1,0] + 1,xy[i,j-1]] is not in xy[i,:]
+		a = [xy[i,j-1,0] + step[0],xy[i,j-1,1] + step[1]]
+		xy[i,j] = a
+
+
 
 # step = steps[np.random.randint(4)]
 # print(step)
@@ -23,20 +33,20 @@ steps = [(1,0),(-1,0),(0,1),(0,-1)]
 # print(xy)
 
 # for each walker calculate the position after each step.
-for i in range(nwalk):
-	for j in range(1,nsteps):
-		flag = 0
-		while flag < 10:
-			step = steps[np.random.randint(4)]
-			a = [xy[i,j-1,0] + step[0],xy[i,j-1,1] + step[1]]
-			print(a)
-			if a in xy[i]:
-				flag += 1
-				print('2')
-			else:
-				xy[i,j] = a
-				flag = 0
-				print('3')
+# for i in range(nwalk):
+# 	for j in range(1,nsteps):
+# 		flag = 0
+# 		while flag < 10:
+# 			step = steps[np.random.randint(4)]
+# 			a = [xy[i,j-1,0] + step[0],xy[i,j-1,1] + step[1]]
+# 			print(a)
+# 			if a in xy[i]:
+# 				flag += 1
+# 				print('2')
+# 			else:
+# 				xy[i,j] = a
+# 				flag = 0
+# 				print('3')
       # xsteps[i,j]=xsteps[i,j-1] + np.cos(steps[i,j,0])
       # ysteps[i,j]=ysteps[i,j-1] + np.sin(steps[i,j,1])
 

@@ -2,14 +2,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-ncells=20  #number of sites to fill
-nside=20    #width of the grid
-r = 15
+ncells = 2560  #number of sites to fill
+nside = 256   #width of the grid
+# r = 15
 
 body=np.zeros((nside,nside))-1  #array holding the cell occupancy counter (-1=empty; 0 = candidate; 1=filled)
 age=np.zeros((nside,nside))    #make an array that holds the step number for which the cell is occupied
 
-nsteps = 10
+nsteps = nside-10
 neighbors=np.array([
 	(0, 1), 
 	(0, -1), 
@@ -25,8 +25,9 @@ for near in neighbors:
 for i in range(ncells-1):
 	flag = 0
 	while flag == 0:
-		theta = 2*np.pi*np.random.rand()
-		position = [int(round(r*np.cos(theta))),int(round(r*np.sin(theta)))]
+		# theta = 2*np.pi*np.random.rand()
+		position = [int(round(nside*np.random.rand())),int(round(nside*np.random.rand()))]
+		# position = [int(round(r*np.cos(theta))),int(round(r*np.sin(theta)))]
 		for j in range(1,nsteps):
 			# Randomly choose a step and add the result of that step to our position list.
 			step = neighbors[np.random.randint(4)]

@@ -5,8 +5,8 @@ import matplotlib.animation as anim
 
 # Define constants and parameters.  A few combinations of values cause overflow errors.
 g = 9.8
-l1 = 1
-l2 = 1
+l1 = 3
+l2 = 2
 m1 = 2
 m2 = 1
 
@@ -15,7 +15,7 @@ tl = l1 + l2 + 0.5
 
 
 # Define starting conditions.
-th10 = 3/2 * np.pi
+th10 = 1/2 * np.pi
 th20 = np.pi/2
 w10 = 1
 w20 = 0

@@ -15,12 +15,15 @@ def sign(a, b):    # utility function to select proper sign for flipping distanc
 		return  - abs(a)
 
 # Define the number of atoms so it is a perfect square, simplifies setup
-Natoms = 16
+Natoms = 64
 sqrtNatoms = int(np.sqrt(Natoms))
-Nsteps =  40
+Nsteps =  400
 Kinit = 2.0    # initial average kinetic energy of each particle
 v0 = np.sqrt(2.*Kinit)    # initial average speed of each particle, m = 1
 dt = 0.02
+
+# Create an array to store the potential energy at each step.
+PEnergy = np.zeros(Nsteps)
 
 # Now define all the variable arrays.  For now, do not keep track of forces.
 x  = np.zeros( (Natoms,Nsteps),    float)                       #  x position of atoms
@@ -58,6 +61,7 @@ for n1 in range(0, Natoms):
 	vx[n1,1] = vx[n1,0]
 	vy[n1,1] = vy[n1,0]
 
+
 # now do all other steps with Verlet starting with third position
 for ns in range(2, Nsteps):
 
@@ -78,38 +82,46 @@ for ns in range(2, Nsteps):
 		elif y[k,ns-1] < 0:
 			y[k,ns-1] = y[k,ns-1] + L
 			y[k,ns-2] = y[k,ns-2] + L
-	
-	# Now loop over all atoms . . . . 
+
+	accx = np.zeros((Natoms,Natoms), float)
+	accy = np.zeros((Natoms,Natoms), float)
+
+	# Now loop over all atoms to fill in the lower triangular portion of  the acceleration arrays
 	for n in range(0, Natoms):
-		accx = 0
-		accy = 0
-		# . . . . and for each atom, find the current force/acceleration from all other atoms
-		for m in range(0, Natoms): 
-			if m == n:
-			   continue
+		for m in range(n+1, Natoms):
+
 # calculate the minimum x distance
 			dx = x[n,ns-1]-x[m,ns-1]
 			dy = y[n,ns-1]-y[m,ns-1]
+
 			if np.abs(dx) > L/2.:
-				# dx = dx-L/2.
 				dx = dx  -  sign(L, dx)    #  interact with closer image
+
 # now get the minimum y distance
 			if np.abs(dy) > L/2.:
 				dy = dy  -  sign(L, dy)
-		  
+
 			rmn = np.sqrt(dx*dx+dy*dy)
 			if rmn > 6.0:
 				continue      # if the particle is beyond some max dist, ignore
+
 			elif rmn < 0.0001:
 				rmn = 0.0001  # limit the approach of particles, including the rmn = 0 case
-			fmn = 24.*(2./rmn**13 - 1./rmn**7)  # force on n from m
-			thetamn = np.arctan2(dy,dx)
-			accx += fmn*np.cos(thetamn)   # accelerations, remember m = 1 otherwise divide f by m
-			accy += fmn*np.sin(thetamn)
 
+			fmn = 24.*(2./rmn**13 - 1./rmn**7)  # force on n from m
+			PEnergy[ns] += -4.*(1./rmn**12 - 1./rmn**6)
+			thetamn = np.arctan2(dy,dx)
+			accx[m,n] = fmn*np.cos(thetamn)   # accelerations, remember m = 1 otherwise divide f by m
+			accy[m,n] = fmn*np.sin(thetamn)
+
+	# Since each array is 0 everywhere but in the lower triangle we can just subtract the transpose to copy the opposite force into the upper triangle.
+	accx = accx - np.transpose(accx)
+	accy = accy - np.transpose(accy)
+
+	for n in range(0,Natoms):
 		# Verlet formula, new position depends on previous two and acceleration term
-		x[n,ns] = 2.*x[n,ns-1] - x[n,ns-2] + accx*dt**2
-		y[n,ns] = 2.*y[n,ns-1] - y[n,ns-2] + accy*dt**2
+		x[n,ns] = 2.*x[n,ns-1] - x[n,ns-2] + np.sum(accx[:,n])*dt**2
+		y[n,ns] = 2.*y[n,ns-1] - y[n,ns-2] + np.sum(accy[:,n])*dt**2
 
 		# could calculate speed later, but go ahead and use central difference formula
 		vx[n,ns-1] = (x[n,ns] - x[n,ns-2])/(2.*dt)
@@ -132,26 +144,27 @@ plt.show()
 # particle velocity
 vel = np.square(vx) + np.square(vy)
 
-plt.hist(vel[:,-3],32)
+plt.hist(vel[:,-2],32)
 plt.show()
 
-# Create an array of velocities
+# Create an array of velocities.  Increasing this size would allow for higher resolution.
 velmap = np.zeros((int(L),int(L)))
-
 for p in range(Natoms):
-	velmap[int(x[p,-3]),int(y[p,-3])] = vel[p,-3]
+	velmap[int(x[p,-2]),int(y[p,-2])] = vel[p,-2]
 
 plt.imshow(velmap,cmap = plt.cm.hot_r)
 plt.title('Heat map of particle velocities')
 plt.show()
 
 KEnergy = 0.5*vel
-PEnergy = 
-Elist = np.zeros(Nsteps-2)
+Klist = np.zeros(Nsteps)
 
-for step in range(Nsteps-2):
-	Elist[step] = sum(KEnergy[:,step])
+for step in range(Nsteps):
+	Klist[step] = np.sum(KEnergy[:,step])
 
-plt.plot(range(Nsteps-2),Elist)
-plt.ylim(ymax=40,ymin=0)
+
+Tlist = Klist + PEnergy
+
+plt.plot(range(Nsteps),Tlist,'k-',range(Nsteps),PEnergy,'b-',range(Nsteps),Klist,'r-',)
+plt.ylim(ymax=Natoms*Kinit+10,ymin=Natoms*Kinit-10)
 plt.show()

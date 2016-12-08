@@ -25,13 +25,17 @@ dt = 0.02
 # Create an array to store the potential energy at each step.
 PEnergy = np.zeros(Nsteps)
 
+# Create an array to track the number of times we intervene by not allowing particles to get too close.
+rounded = np.zeros(Nsteps)
+
+mindist = 100
+avdist = 0
+
 # Now define all the variable arrays.  For now, do not keep track of forces.
-x  = np.zeros( (Natoms,Nsteps),    float)                       #  x position of atoms
-y  = np.zeros( (Natoms,Nsteps),    float)                       #  y position
+x  = np.zeros( (Natoms,Nsteps),    float)               #  x position of atoms
+y  = np.zeros( (Natoms,Nsteps),    float)               #  y position
 vx = np.zeros( (Natoms,Nsteps),    float)               #  x vel. x of atoms
-vy = np.zeros( (Natoms,Nsteps),    float)                #  y component velocity atoms
-# fx = np.zeros( (Natoms,Nsteps, 2), float)                      #  x component of force
-# fy = np.zeros( (Natoms,Nsteps, 2), float)                      #  y component of force
+vy = np.zeros( (Natoms,Nsteps),    float)               #  y component velocity atoms
 
 # setup the initial grid of particles, placing them in a squarish configuration
 sigspace = 5.0 # average spacing between particles in sigma units
@@ -90,26 +94,36 @@ for ns in range(2, Nsteps):
 	for n in range(0, Natoms):
 		for m in range(n+1, Natoms):
 
-# calculate the minimum x distance
+			# calculate the minimum x distance
 			dx = x[n,ns-1]-x[m,ns-1]
 			dy = y[n,ns-1]-y[m,ns-1]
 
 			if np.abs(dx) > L/2.:
 				dx = dx  -  sign(L, dx)    #  interact with closer image
 
-# now get the minimum y distance
+			# now get the minimum y distance
 			if np.abs(dy) > L/2.:
 				dy = dy  -  sign(L, dy)
 
 			rmn = np.sqrt(dx*dx+dy*dy)
+
+			if rmn < mindist:
+				mindist = rmn
+
+			PEnergy[ns] += -4.*(1./rmn**12 - 1./rmn**6)
+
 			if rmn > 6.0:
 				continue      # if the particle is beyond some max dist, ignore
 
-			elif rmn < 0.0001:
-				rmn = 0.0001  # limit the approach of particles, including the rmn = 0 case
+			elif rmn < 0.001:
+				rmn = 0.001  # limit the approach of particles, including the rmn = 0 case
+				rounded[ns] += 1
+
+			if ns == Nsteps-1:
+				avdist += rmn
 
 			fmn = 24.*(2./rmn**13 - 1./rmn**7)  # force on n from m
-			PEnergy[ns] += -4.*(1./rmn**12 - 1./rmn**6)
+			
 			thetamn = np.arctan2(dy,dx)
 			accx[m,n] = fmn*np.cos(thetamn)   # accelerations, remember m = 1 otherwise divide f by m
 			accy[m,n] = fmn*np.sin(thetamn)
@@ -126,6 +140,9 @@ for ns in range(2, Nsteps):
 		# could calculate speed later, but go ahead and use central difference formula
 		vx[n,ns-1] = (x[n,ns] - x[n,ns-2])/(2.*dt)
 		vy[n,ns-1] = (y[n,ns] - y[n,ns-2])/(2.*dt)
+
+print(mindist)
+print(avdist/Natoms)
 
 # Plot the initial positions
 plt.scatter(x[:,0],y[:,0])
@@ -144,27 +161,35 @@ plt.show()
 # particle velocity
 vel = np.square(vx) + np.square(vy)
 
+# Plot a histogram of the speeds.
 plt.hist(vel[:,-2],32)
 plt.show()
 
-# Create an array of velocities.  Increasing this size would allow for higher resolution.
+# Create an array of velocities.
 velmap = np.zeros((int(L),int(L)))
 for p in range(Natoms):
 	velmap[int(x[p,-2]),int(y[p,-2])] = vel[p,-2]
 
+# Plot the particles and display how fast they are moving using a heat map.
 plt.imshow(velmap,cmap = plt.cm.hot_r)
 plt.title('Heat map of particle velocities')
 plt.show()
 
+# Calculate kiinetic energy for each stpe using the square velocity.
 KEnergy = 0.5*vel
 Klist = np.zeros(Nsteps)
 
 for step in range(Nsteps):
 	Klist[step] = np.sum(KEnergy[:,step])
 
-
+# Find the total energy at each step.
 Tlist = Klist + PEnergy
 
+# Plot the energy at each step.  Energy does not appear to be conserved s there is some flaw in the code.
 plt.plot(range(Nsteps),Tlist,'k-',range(Nsteps),PEnergy,'b-',range(Nsteps),Klist,'r-',)
-plt.ylim(ymax=Natoms*Kinit+10,ymin=Natoms*Kinit-10)
+plt.show()
+
+# This plot is to keep track of the number of times the solution had to be rounded up because the particles were too close.  This doesn't actually appear to ever happen normally however.
+# This was added to check if the rounding was causing the energy fluctuations.
+plt.plot(range(Nsteps),rounded,'k')
 plt.show()

@@ -141,14 +141,15 @@ for ns in range(2, Nsteps):
 		vx[n,ns-1] = (x[n,ns] - x[n,ns-2])/(2.*dt)
 		vy[n,ns-1] = (y[n,ns] - y[n,ns-2])/(2.*dt)
 
-print(mindist)
-print(avdist/Natoms)
+# This is to check how close particles are getting, turns out not very.
+print('The closest two particles got was ' + str(mindist))
 
 # Plot the initial positions
 plt.scatter(x[:,0],y[:,0])
 plt.title('Initial atom positions')
 plt.xlabel('x')
 plt.ylabel('y')
+plt.savefig(filename='Plot1.png')
 plt.show()
 
 # Plot the final positions
@@ -156,13 +157,20 @@ plt.scatter(x[:,-1],y[:,-1])
 plt.title('Final atom positions')
 plt.xlabel('x')
 plt.ylabel('y')
+plt.ylim(ymin=0,ymax=L)
+plt.xlim(xmin=0,xmax=L)
+plt.savefig(filename='Plot2.png')
 plt.show()
 
-# particle velocity
+# particle square velocity
 vel = np.square(vx) + np.square(vy)
 
-# Plot a histogram of the speeds.
+# Plot a histogram of the square velocity.
 plt.hist(vel[:,-2],32)
+plt.title('Histogram of particle square velocity')
+plt.xlabel('square velocity')
+plt.ylabel('number of particles')
+plt.savefig(filename='Plot3.png')
 plt.show()
 
 # Create an array of velocities.
@@ -171,8 +179,18 @@ for p in range(Natoms):
 	velmap[int(x[p,-2]),int(y[p,-2])] = vel[p,-2]
 
 # Plot the particles and display how fast they are moving using a heat map.
-plt.imshow(velmap,cmap = plt.cm.hot_r)
-plt.title('Heat map of particle velocities')
+# This aligns the particles to a rigid grid, to correct that we could increase the 'resolution' by just multiplying every number by some scaling factor.
+# This in turn makes the tiny dot sizes too small to see.  I can't find anything to make the dot size larger as a simple command or flag, but this is solvable by setting adjacent blocks of cells the same as the target cell
+# This code for example sets a square 40x40 pixels centered on the particle location to make it easy to see, but the codealso take a longer time to run so when we do this.
+# velmap = np.zeros((int(100*L),int(100*L)))
+# for p in range(Natoms):
+# 	velmap[int(100*x[p,-2])-20:int(100*x[p,-2])+20,int(100*y[p,-2])-20:int(100*y[p,-2])+20] = vel[p,-2]
+
+plt.imshow(velmap,cmap = plt.cm.hot_r,origin='lower')
+plt.title('Heat map of particle speed')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.savefig(filename='Plot4.png')
 plt.show()
 
 # Calculate kiinetic energy for each stpe using the square velocity.
@@ -186,10 +204,26 @@ for step in range(Nsteps):
 Tlist = Klist + PEnergy
 
 # Plot the energy at each step.  Energy does not appear to be conserved s there is some flaw in the code.
-plt.plot(range(Nsteps),Tlist,'k-',range(Nsteps),PEnergy,'b-',range(Nsteps),Klist,'r-',)
+plt.plot(range(Nsteps),Tlist,'k-',label='Total Energy')
+plt.plot(range(Nsteps),PEnergy,'b-',label='Potential Energy')
+plt.plot(range(Nsteps),Klist,'r-',label='Kinetic Energy')
+plt.title('Energy over time')
+plt.legend(loc='center')
+plt.xlabel('step')
+plt.ylabel('energy')
+plt.savefig(filename='Plot5.png')
 plt.show()
 
 # This plot is to keep track of the number of times the solution had to be rounded up because the particles were too close.  This doesn't actually appear to ever happen normally however.
 # This was added to check if the rounding was causing the energy fluctuations.
-plt.plot(range(Nsteps),rounded,'k')
+plt.plot(range(Nsteps),rounded,'ko')
+plt.title('Number of times the script prevented two \n particles from \'colliding\' by rounding')
+plt.xlabel('step')
+plt.ylim(ymin=0,ymax=5)
+plt.ylabel('number of times rounded')
+plt.savefig(filename='Plot6.png')
 plt.show()
+
+# The histograms do look like a boltzmann distribution.
+# Energy seems to fluctuate around a value.  the fluctuations are not due to rounding as rounding simply doesn't appear to actually happen.
+# This code was modified to fill in the lower triangle of the force array, then the transpose is subtracted to avoid recalculating the forces between pairs of particles.

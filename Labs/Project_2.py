@@ -25,14 +25,15 @@ c = 1
 r0 = 156.8
 dr0 = 0
 th0 = 0
-dt0 = 1.255E-6
-
+dt0 = 1.23E-6
 
 # Create a list of times
-times = np.linspace(0,5,20000)
+times = np.linspace(0,5000,20000000)
 
 # Store the initial conditions in an array.
 r0 = [r0,th0,dr0,dt0]
+
+h = r0[3]*r0[0]**2
 
 # Define a function to find the derivative of each component of r.
 def Edr(r,t):
@@ -43,9 +44,8 @@ def Edr(r,t):
 	v[0] = r[2]
 	v[1] = r[3]
 
-	# The Schwarzschild equations of motion
-	v[2] = - G*M/(r[0]**2) + r[0]*(v[1]**2) - 3*G*M/c**2 * (v[1]**2)
-	v[3] = - (2/r[0]) * v[0]*v[1]
+	v[2] = -1/( m/(h)**2 + 3*m/r[0]**3 - 1/r[0])
+	v[3] = 0
 	
 	return v
 
@@ -57,7 +57,7 @@ def Ndr(r,t):
 	v[1] = r[3]
 
 	# Newtonian equations of motion
-	v[2] = - G*M/r[0]**2 + (r[3]**2) * r[0]
+	v[2] = -M/r[0]**2 + h
 	v[3] = 0
 	return v
 
@@ -66,7 +66,11 @@ Newt = inter.odeint(Ndr,r0,times)
 Ein = inter.odeint(Edr,r0,times)
 
 plt.plot(Newt[:,0]*np.cos(Newt[:,1]),Newt[:,0]*np.sin(Newt[:,1]))
+plt.plot(0,0,'ro')
+plt.title('Newtonian model')
 plt.show()
 
 plt.plot(Ein[:,0]*np.cos(Ein[:,1]),Ein[:,0]*np.sin(Ein[:,1]))
+plt.plot(0,0,'ro')
+plt.title('Schwarzschild metric')
 plt.show()

@@ -17,13 +17,13 @@ dt0 = 4.0833E-15
 
 # Create a list of times, the orbital period is 8.
 a = 0
-b = 170000
+b = 170000000
 h = 1
 
 # Store the initial conditions in an array.
 p0 = [r0,th0,dr0,dt0]
 
-l = p0[3]*p0[0]**2
+l = m*p0[3]*p0[0]**2
 
 def step(r,p):
 	newr = 2*r[-1] - r[-2] + h**2 * (-M/r[-1]**2 + l**2 / r[-1]**3 - 3*M*l**2 / r[-1]**4)

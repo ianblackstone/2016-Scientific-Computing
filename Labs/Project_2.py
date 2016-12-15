@@ -3,38 +3,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.integrate as inter
 
-# # These are the constants and masses in SI units
-# M = 1.9884E30
-# m = 3.30104E23
-# G = 6.674E-11
-# c = 3E8
-
-# # Define starting conditions in SI units
-# th0 = np.pi
-# dt0 = -1.255E-6
-# r0 = 47E9
-# dr0 = 0
-
 # These are the constants and masses in geometric units
-M = 1
+M = 1477
 m = 2.451E-4
 G = 1
 c = 1
 
 # Define starting conditions in geometric units
-r0 = 50
+r0 = 4.7607E10
 dr0 = 0
 th0 = 0
-dt0 = 10/(r0*np.sqrt(r0-3))
-# dt0 = 4E-15
+dt0 = 1.22E-6
 
 # Create a list of times, the orbital period is 8.
-times = np.linspace(0,1000,20000000)
+times = np.linspace(0,10000,200000)
 
 # Store the initial conditions in an array.
 p0 = [r0,th0,dr0,dt0]
 
-h = p0[3]*p0[0]/(r0*np.sqrt(r0-3))
+h = m*p0[3]*p0[0]**2
 
 # Define a function to find the derivative of each component of r.
 def Edr(p,t):
@@ -45,44 +32,22 @@ def Edr(p,t):
 	v[0] = p[2]
 	v[1] = p[3]
 
-	v[2] = -1/p[0]**2 + h**2 / p[0]**3 - 3*h**2 / p[0]**4
+	v[2] = -M/p[0]**2 + h**2 / p[0]**3 - 3*M*h**2 / p[0]**4
 	v[3] = h/p[0]**2
 	
 	return v
 
-# def Ndr(p,t):
+# Call the ODe function
+Ein = inter.odeint(Edr,p0,times)
 
-# 	v = np.zeros_like(p)
+# I was getting errors from the ODEint call when I tried to pass too many points through at once, so I looped over the function call multiple times to complete one orbit.
+for k in range(0,20):
+	Ein = np.append(Ein,inter.odeint(Edr,Ein[-1],times),axis=0)
 
-# 	v[0] = p[2]
-# 	v[1] = p[3]
-
-# 	# Newtonian equations of motion
-# 	v[2] = -M/p[0]**2 + h**2 /(m**2 * p[0]**3)
-# 	v[3] = -2*h/(m*p[0])
-# 	return v
-
-# Call the ODE solver
-# Newt = inter.odeint(Ndr,p0,times)
-# Ein = inter.odeint(Edr,p0,times)
-Ein = inter.ode(Edr)
-
-# for k in range(0,28):
-# 	Ein = np.append(Ein,inter.odeint(Edr,Ein[-1],times),axis=0)
-
-
-# plt.plot(Newt[:,0]*np.cos(Newt[:,1]),Newt[:,0]*np.sin(Newt[:,1]))
-# plt.plot(0,0,'ro')
-# plt.title('Newtonian model')
-# plt.xlabel('meters')
-# plt.ylabel('meters')
-# plt.axes().set_aspect('equal', 'datalim')
-# plt.savefig('Newt_plot_test.png')
-# plt.show()
-
+# Plot the data and mark the sun's position.
 plt.plot(Ein[:,0]*np.cos(Ein[:,1]),Ein[:,0]*np.sin(Ein[:,1]),'b')
 plt.plot(0,0,'ro')
-plt.title('Schwarzschild metric')
+plt.title('Schwarzschild metric using ODEint')
 plt.xlabel('meters')
 plt.ylabel('meters')
 plt.axes().set_aspect('equal', 'datalim')

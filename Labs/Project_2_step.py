@@ -13,21 +13,23 @@ c = 1
 r0 = 4.7607E10
 dr0 = 0
 th0 = 0
-dt0 = 4.0833E-15
+dt0 = 0.001
 
-# Create a list of times, the orbital period is 8.
+# define a start time, end time, and step size.
 a = 0
-b = 170000000
-h = 1
+b = 1250000
+h = 0.1
 
 # Store the initial conditions in an array.
 p0 = [r0,th0,dr0,dt0]
 
+# Angular momentum
 l = m*p0[3]*p0[0]**2
 
+# This function steps the simulation forward one step.
 def step(r,p):
 	newr = 2*r[-1] - r[-2] + h**2 * (-M/r[-1]**2 + l**2 / r[-1]**3 - 3*M*l**2 / r[-1]**4)
-	newt = p[-1] + 4*h*(l/(newr + r[-1]))
+	newt = p[-1] + 4*h*(l/(newr + r[-1])**2)
 	return newr, newt
 
 # Define a function to find the derivative of each component of r.
@@ -44,8 +46,10 @@ def Edr(p):
 	
 	return v
 
+# Make a single step
 p1 = p0 + Edr(p0)*h
 
+# Create two arrays for the radius and angle
 rpos = [p0[0], p1[0]]
 tpos = [p0[1], p1[1]]
 
@@ -54,18 +58,13 @@ for t in range(a,b):
 	rpos.append(newr)
 	tpos.append(newt)
 
-minimum = np.amin(rpos)
-maximum = np.amax(rpos)
 
-print(minimum)
-print(maximum)
-
+# Plot the data
 plt.plot(np.multiply(rpos,np.cos(tpos)),np.multiply(rpos,np.sin(tpos)),'b')
 plt.plot(0,0,'ro')
-# plt.plot(rpos[0]*np.cos(tpos[0]),rpos[0]*np.sin(tpos[0]),'go')
 plt.ylim(ymax=1.5*r0,ymin=-1.5*r0)
 plt.xlim(xmax=1.5*r0,xmin=-1.5*r0)
-plt.title('Schwarzschild metric')
+plt.title('Schwarzschild metric using the step method')
 plt.xlabel('meters')
 plt.ylabel('meters')
 plt.axes().set_aspect('equal', 'datalim')

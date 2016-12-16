@@ -6,7 +6,7 @@ import scipy.integrate as inter
 # G * the sun's mass in kg.
 M = 1.477
 
-# Define wobble and critical radius
+# Define wobble and critical radius.  u is defined as 1/r.
 w0 = 0.177
 rc = 57.9E9
 uc = 1/rc
@@ -21,6 +21,7 @@ angles = np.linspace(0,orbits*2*np.pi,res)
 # Calculate the wobble as a function of phi.
 w = w0*np.cos((1-6*M*uc)*angles)
 
+# Change from u to r.
 upoints = uc*(1+w)
 rpoints = 1/upoints
 
